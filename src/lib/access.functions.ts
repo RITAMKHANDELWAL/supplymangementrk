@@ -89,7 +89,9 @@ export const listAccessRequests = createServerFn({ method: "POST" })
     requireOwner(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin.from("access_requests").select("*").order("created_at", { ascending: false });
-    if (data.status && data.status !== "all") q = q.eq("status", data.status);
+    if (data.status && data.status !== "all") {
+      q = q.eq("status", data.status as "pending" | "approved" | "denied" | "expired");
+    }
     const { data: rows, error } = await q.limit(500);
     if (error) throw new Error(error.message);
     return { rows: rows || [] };
