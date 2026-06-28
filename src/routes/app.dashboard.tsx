@@ -51,13 +51,13 @@ export const Route = createFileRoute("/app/dashboard")({
   component: Dashboard,
 });
 
-/* Chart tooltip shared style */
+/* Chart tooltip shared style — CSS vars resolve correctly per theme */
 const TOOLTIP_STYLE = {
-  background: "oklch(0.17 0.013 265)",
-  border: "1px solid oklch(0.24 0.014 265)",
+  background: "var(--popover)",
+  border: "1px solid var(--border)",
   borderRadius: "6px",
   fontSize: 11,
-  color: "oklch(0.91 0.006 255)",
+  color: "var(--foreground)",
 };
 
 function Dashboard() {
@@ -430,14 +430,14 @@ function Dashboard() {
             <LineChart data={exposureTrend}>
               <XAxis
                 dataKey="d"
-                stroke="oklch(0.58 0.018 258)"
+                stroke="var(--muted-foreground)"
                 fontSize={9}
                 tickLine={false}
                 axisLine={false}
                 interval={1}
               />
               <YAxis
-                stroke="oklch(0.58 0.018 258)"
+                stroke="var(--muted-foreground)"
                 fontSize={9}
                 tickLine={false}
                 axisLine={false}
@@ -451,10 +451,10 @@ function Dashboard() {
               <Line
                 type="monotone"
                 dataKey="v"
-                stroke="oklch(0.83 0.165 85)"
+                stroke="var(--primary)"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: "oklch(0.83 0.165 85)" }}
+                activeDot={{ r: 4, fill: "var(--primary)" }}
               />
             </LineChart>
           </ResponsiveContainer>

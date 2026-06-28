@@ -44,7 +44,7 @@ export function Kpi({
     critical: "border-destructive/30",
     warning:  "border-primary/30",
     info:     "border-accent/30",
-    success:  "border-[oklch(0.70_0.165_152_/_0.30)]",
+    success:  "border-success/30",
   }[tone];
 
   const glowCls = {
@@ -60,13 +60,13 @@ export function Kpi({
     critical: "text-destructive",
     warning:  "text-primary",
     info:     "text-accent",
-    success:  "text-[oklch(0.70_0.165_152)]",
+    success:  "text-success",
   }[tone];
 
   const trendEl = trend && trendLabel && (
     <div className={`flex items-center gap-1 text-[11px] font-mono mt-1 ${
       trend === "up"     ? "text-destructive" :
-      trend === "down"   ? "text-[oklch(0.70_0.165_152)]" :
+      trend === "down"   ? "text-success" :
                            "text-primary"
     }`}>
       {trend === "up"     ? <TrendingUp className="h-3 w-3" /> :
@@ -120,7 +120,7 @@ export function StatusDot({
   status: "healthy" | "warning" | "critical";
 }) {
   const cls = {
-    healthy:  "bg-[oklch(0.70_0.165_152)]",
+    healthy:  "bg-success",
     warning:  "bg-primary",
     critical: "bg-destructive",
   }[status];
@@ -137,16 +137,16 @@ const BADGE_MAP: Record<string, string> = {
   low:        "bg-secondary/60 text-muted-foreground border-border",
   open:       "bg-primary/10 text-primary border-primary/25",
   mitigating: "bg-accent/10 text-accent border-accent/25",
-  resolved:   "bg-[oklch(0.70_0.165_152_/_0.12)] text-[oklch(0.74_0.165_152)] border-[oklch(0.70_0.165_152_/_0.25)]",
+  resolved:   "bg-success/12 text-success border-success/25",
   delayed:    "bg-destructive/10 text-destructive border-destructive/25",
   blocked:    "bg-destructive/10 text-destructive border-destructive/25",
   running:    "bg-accent/10 text-accent border-accent/25",
   scheduled:  "bg-secondary/60 text-muted-foreground border-border",
-  done:       "bg-[oklch(0.70_0.165_152_/_0.12)] text-[oklch(0.74_0.165_152)] border-[oklch(0.70_0.165_152_/_0.25)]",
-  received:   "bg-[oklch(0.70_0.165_152_/_0.12)] text-[oklch(0.74_0.165_152)] border-[oklch(0.70_0.165_152_/_0.25)]",
-  healthy:    "bg-[oklch(0.70_0.165_152_/_0.12)] text-[oklch(0.74_0.165_152)] border-[oklch(0.70_0.165_152_/_0.25)]",
+  done:       "bg-success/12 text-success border-success/25",
+  received:   "bg-success/12 text-success border-success/25",
+  healthy:    "bg-success/12 text-success border-success/25",
   warning:    "bg-primary/10 text-primary border-primary/25",
-  active:     "bg-[oklch(0.70_0.165_152_/_0.12)] text-[oklch(0.74_0.165_152)] border-[oklch(0.70_0.165_152_/_0.25)]",
+  active:     "bg-success/12 text-success border-success/25",
   invited:    "bg-accent/10 text-accent border-accent/25",
   disabled:   "bg-destructive/10 text-destructive border-destructive/25",
 };
@@ -335,7 +335,7 @@ export function ActivityItem({
   const dotCls = {
     critical: "bg-destructive",
     info:     "bg-accent",
-    success:  "bg-[oklch(0.70_0.165_152)]",
+    success:  "bg-success",
     warning:  "bg-primary",
     neutral:  "bg-border",
   }[tone];

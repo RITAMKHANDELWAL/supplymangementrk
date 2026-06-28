@@ -3,11 +3,13 @@ import { useMemo } from "react";
 import { PageHeader, Kpi, SeverityBadge } from "@/components/Kpi";
 import { db, matBy, supBy } from "@/lib/mockData";
 import { topRiskMaterials, topRiskSuppliers, topShortagesByImpact, productionRisk } from "@/lib/scoring";
+import { useTheme } from "@/lib/theme";
 import { AlertTriangle, TrendingUp, Building2, DollarSign } from "lucide-react";
 
 export const Route = createFileRoute("/app/command")({ component: CommandPage });
 
 function CommandPage() {
+  const { theme } = useTheme();
   const topMats = useMemo(() => topRiskMaterials(10), []);
   const topSups = useMemo(() => topRiskSuppliers(10), []);
   const topShorts = useMemo(() => topShortagesByImpact(10), []);
@@ -28,6 +30,15 @@ function CommandPage() {
     return Math.round(prodRisk.score + Math.sin(i * 0.7) * 8 + t * 12);
   });
   const maxF = Math.max(...forecast);
+
+  // Forecast bar color: gold (low risk) shifting toward red (high risk) as v rises.
+  // Same hue-shift logic in both themes; only the lightness anchor changes so bars
+  // stay legible against a dark vs. white card.
+  const baseL = theme === "dark" ? 0.6 : 0.52;
+  const barColor = (v: number) => `oklch(${(baseL - v / 200).toFixed(3)} 0.18 ${82 - v / 4})`;
+  // Heatmap cell: fixed deep-red wash, intensity via opacity only — this reads
+  // correctly on both a dark card and a white card without per-theme tuning.
+  const heatCell = (v: number, max: number) => `oklch(0.54 0.22 22 / ${0.08 + 0.55 * (v / max)})`;
 
   return (
     <div>
@@ -95,7 +106,7 @@ function CommandPage() {
           <div className="h-40 flex items-end gap-1.5">
             {forecast.map((v, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full rounded-t" style={{ height: `${(v / maxF) * 100}%`, background: `oklch(${0.6 - (v / 200)} 0.18 ${82 - v / 4})` }} />
+                <div className="w-full rounded-t" style={{ height: `${(v / maxF) * 100}%`, background: barColor(v) }} />
                 <span className="text-[9px] font-mono text-muted-foreground">d{i + 1}</span>
               </div>
             ))}
@@ -113,7 +124,7 @@ function CommandPage() {
                 const cb = mats.filter((m) => m.criticality === "B").length;
                 const cc = mats.filter((m) => m.criticality === "C").length;
                 const max = Math.max(ca, cb, cc, 1);
-                const cell = (v: number) => <td className="text-center font-mono p-1" style={{ background: `oklch(0.3 ${0.15 * (v / max)} 22 / ${0.2 + 0.7 * (v / max)})` }}>{v}</td>;
+                const cell = (v: number) => <td className="text-center font-mono p-1" style={{ background: heatCell(v, max) }}>{v}</td>;
                 return <tr key={r}><td className="py-1 font-mono">{r}</td>{cell(ca)}{cell(cb)}{cell(cc)}</tr>;
               })}
             </tbody>

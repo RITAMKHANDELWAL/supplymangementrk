@@ -1,14 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { PageHeader, Kpi } from "@/components/Kpi";
-import { ocelGraph, OBJ_TYPE_META, type ObjType } from "@/lib/ocelGraph";
+import { ocelGraph, getObjTypeMeta, type ObjType } from "@/lib/ocelGraph";
 import { initialView, viewMetrics } from "@/lib/granularity";
 import { computeCascade } from "@/lib/cascade";
 import { db } from "@/lib/mockData";
+import { useTheme } from "@/lib/theme";
 
 export const Route = createFileRoute("/app/research")({ component: ResearchPage });
 
 function ResearchPage() {
+  const { theme } = useTheme();
+  const typeMeta = getObjTypeMeta(theme);
   const g = useMemo(() => ocelGraph(), []);
   const view = useMemo(() => initialView(), []);
   const m = useMemo(() => viewMetrics(view), [view]);
@@ -44,12 +47,15 @@ function ResearchPage() {
               const pct = (v / totalNodes) * 100;
               return (
                 <div key={t} className="text-[11px]">
-                  <div className="flex justify-between font-mono">
-                    <span className="uppercase" style={{ color: OBJ_TYPE_META[t].color }}>{OBJ_TYPE_META[t].label}</span>
-                    <span>{v} · {pct.toFixed(1)}%</span>
+                  <div className="flex justify-between font-mono items-center">
+                    <span className="uppercase flex items-center gap-1.5 text-foreground/90">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full shrink-0" style={{ background: typeMeta[t].color }} />
+                      {typeMeta[t].label}
+                    </span>
+                    <span className="text-muted-foreground">{v} · {pct.toFixed(1)}%</span>
                   </div>
                   <div className="h-1.5 mt-0.5 bg-secondary/40 rounded overflow-hidden">
-                    <div className="h-full" style={{ width: `${pct}%`, background: OBJ_TYPE_META[t].color }} />
+                    <div className="h-full bg-primary/60 rounded" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );

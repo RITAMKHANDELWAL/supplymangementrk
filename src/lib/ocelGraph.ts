@@ -178,7 +178,10 @@ export function ocelGraph(): OcelGraph {
   return cached;
 }
 
-export const OBJ_TYPE_META: Record<ObjType, { color: string; label: string }> = {
+/* OCEL object-type legend colors. Same hues in both themes — only
+   lightness/chroma shift so each stays legible against its card background
+   (dark cards want lighter/brighter; white cards want deeper/more saturated). */
+export const OBJ_TYPE_META_DARK: Record<ObjType, { color: string; label: string }> = {
   material:         { color: "oklch(0.82 0.16 82)",  label: "Material" },
   supplier:         { color: "oklch(0.78 0.14 200)", label: "Supplier" },
   purchase_order:   { color: "oklch(0.75 0.16 30)",  label: "Purchase Order" },
@@ -191,6 +194,27 @@ export const OBJ_TYPE_META: Record<ObjType, { color: string; label: string }> = 
   shortage:         { color: "oklch(0.62 0.24 22)",  label: "Shortage" },
   event:            { color: "oklch(0.55 0.02 250)", label: "Event" },
 };
+
+export const OBJ_TYPE_META_LIGHT: Record<ObjType, { color: string; label: string }> = {
+  material:         { color: "oklch(0.55 0.16 82)",  label: "Material" },
+  supplier:         { color: "oklch(0.50 0.14 200)", label: "Supplier" },
+  purchase_order:   { color: "oklch(0.52 0.18 30)",  label: "Purchase Order" },
+  production_order: { color: "oklch(0.52 0.18 280)", label: "Production Order" },
+  plant:            { color: "oklch(0.48 0.16 150)", label: "Plant" },
+  batch:            { color: "oklch(0.50 0.14 320)", label: "Batch" },
+  inventory:        { color: "oklch(0.50 0.16 60)",  label: "Inventory" },
+  warehouse:        { color: "oklch(0.48 0.12 240)", label: "Warehouse" },
+  customer:         { color: "oklch(0.50 0.16 340)", label: "Customer" },
+  shortage:         { color: "oklch(0.54 0.22 22)",  label: "Shortage" },
+  event:            { color: "oklch(0.45 0.03 250)", label: "Event" },
+};
+
+/** @deprecated use getObjTypeMeta(theme) so colors adapt to light/dark */
+export const OBJ_TYPE_META = OBJ_TYPE_META_DARK;
+
+export function getObjTypeMeta(theme: "light" | "dark") {
+  return theme === "dark" ? OBJ_TYPE_META_DARK : OBJ_TYPE_META_LIGHT;
+}
 
 export function shortestPath(g: OcelGraph, from: string, to: string): string[] {
   if (!g.byId.has(from) || !g.byId.has(to)) return [];

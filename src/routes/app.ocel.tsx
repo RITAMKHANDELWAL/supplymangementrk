@@ -4,8 +4,9 @@ import ReactFlow, { Background, BackgroundVariant, Controls, MiniMap, MarkerType
 import "reactflow/dist/style.css";
 import { PageHeader } from "@/components/Kpi";
 import { GraphNode, type GraphNodeData } from "@/components/ocel/GraphNode";
-import { OBJ_TYPE_META, ocelGraph, shortestPath, type ObjType } from "@/lib/ocelGraph";
+import { getObjTypeMeta, ocelGraph, shortestPath, type ObjType } from "@/lib/ocelGraph";
 import { initialView, applyOp, viewMetrics, type GranOp, type GranView } from "@/lib/granularity";
+import { useTheme } from "@/lib/theme";
 import { ChevronsDownUp, ChevronsUpDown, Maximize2, Minimize2, Search, X } from "lucide-react";
 
 export const Route = createFileRoute("/app/ocel")({ component: OCEL });
@@ -13,7 +14,11 @@ export const Route = createFileRoute("/app/ocel")({ component: OCEL });
 const nodeTypes = { ocel: GraphNode };
 const TYPES: ObjType[] = ["supplier","material","inventory","purchase_order","production_order","plant","batch","warehouse","customer","shortage","event"];
 
-function layout(view: GranView, focusId: string | undefined, pathSet: Set<string>) {
+/* Edge colors resolved from live CSS vars — same pattern as app.cascade.tsx,
+   since this function runs outside the component and has no hook access. */
+type EdgeColors = { label: string; path: string; normal: string; marker: string; bg: string };
+
+function layout(view: GranView, focusId: string | undefined, pathSet: Set<string>, edgeColors: EdgeColors) {
   // Layered layout by object type.
   const cols: ObjType[] = ["supplier","purchase_order","material","inventory","warehouse","batch","production_order","plant","customer","shortage","event"];
   const byCol = new Map<ObjType, typeof view.nodes>();
@@ -42,14 +47,16 @@ function layout(view: GranView, focusId: string | undefined, pathSet: Set<string
     .slice(0, 600)
     .map((e) => ({
       id: e.id, source: e.source, target: e.target, label: e.relation,
-      labelStyle: { fontSize: 8, fill: "oklch(0.62 0.018 255)" },
-      style: { stroke: pathSet.has(e.source) && pathSet.has(e.target) ? "oklch(0.78 0.14 200)" : "oklch(0.82 0.16 82 / 0.35)", strokeWidth: pathSet.has(e.source) && pathSet.has(e.target) ? 2 : 1 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: "oklch(0.82 0.16 82 / 0.5)" },
+      labelStyle: { fontSize: 8, fill: edgeColors.label },
+      style: { stroke: pathSet.has(e.source) && pathSet.has(e.target) ? edgeColors.path : edgeColors.normal, strokeWidth: pathSet.has(e.source) && pathSet.has(e.target) ? 2 : 1 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: edgeColors.marker },
     }));
   return { rfNodes, rfEdges };
 }
 
 function OCEL() {
+  const { theme } = useTheme();
+  const typeMeta = getObjTypeMeta(theme);
   const [view, setView] = useState<GranView>(() => initialView());
   const [selected, setSelected] = useState<string | undefined>();
   const [pathFrom, setPathFrom] = useState<string>("");
@@ -77,7 +84,21 @@ function OCEL() {
     return { ...view, nodes, edges, objectCount: nodes.length, relationshipCount: edges.length };
   }, [search, view]);
 
-  const { rfNodes, rfEdges } = useMemo(() => layout(filteredView, selected, pathSet), [filteredView, selected, pathSet]);
+  // Resolved once per theme change — same approach as app.cascade.tsx
+  const edgeColors = useMemo(() => {
+    if (typeof window === "undefined") return { label: "#888", path: "#5bf", normal: "#c90", marker: "#c90", bg: "#333" };
+    const cs = getComputedStyle(document.documentElement);
+    const v = (name: string) => cs.getPropertyValue(name).trim();
+    return {
+      label: v("--muted-foreground"),
+      path: v("--accent"),
+      normal: `color-mix(in oklch, ${v("--primary")} 35%, transparent)`,
+      marker: `color-mix(in oklch, ${v("--primary")} 50%, transparent)`,
+      bg: `color-mix(in oklch, ${v("--border")} 70%, transparent)`,
+    };
+  }, [theme]);
+
+  const { rfNodes, rfEdges } = useMemo(() => layout(filteredView, selected, pathSet, edgeColors), [filteredView, selected, pathSet, edgeColors]);
   const metrics = useMemo(() => viewMetrics(view), [view]);
 
   const op = (o: GranOp) => setView((v) => applyOp(v, o, selected));
@@ -115,10 +136,10 @@ function OCEL() {
             fitView minZoom={0.15} maxZoom={1.8} proOptions={{ hideAttribution: true }}
             onNodeClick={(_, n) => setSelected(n.id)}
             defaultEdgeOptions={{ animated: false }}>
-            <Background color="oklch(0.22 0.013 260)" gap={28} variant={BackgroundVariant.Dots} />
+            <Background color={edgeColors.bg} gap={28} variant={BackgroundVariant.Dots} />
             <Controls className="!bg-card !border-border" />
             <MiniMap pannable zoomable className="!bg-card !border-border"
-              nodeColor={(n) => OBJ_TYPE_META[(n.data as GraphNodeData).type].color} />
+              nodeColor={(n) => typeMeta[(n.data as GraphNodeData).type].color} />
           </ReactFlow>
         </div>
 
@@ -182,7 +203,7 @@ function OCEL() {
             <div className="tech-label mb-2">Legend</div>
             <div className="grid grid-cols-2 gap-1 text-[10px] font-mono">
               {TYPES.map((t) => (
-                <div key={t} className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm" style={{ background: OBJ_TYPE_META[t].color }} />{OBJ_TYPE_META[t].label}</div>
+                <div key={t} className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm" style={{ background: typeMeta[t].color }} />{typeMeta[t].label}</div>
               ))}
             </div>
           </div>
