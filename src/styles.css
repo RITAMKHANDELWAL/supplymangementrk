@@ -1,6 +1,6 @@
 /*
- * SupplyMind — Design System v2.0
- * Black × Gold × Professional Enterprise SaaS
+ * SupplyMind — Design System v2.1
+ * Graphite × Gold × Professional Enterprise SaaS — Light + Dark
  *
  * REPLACES: src/styles.css (drop-in replacement)
  *
@@ -9,9 +9,15 @@
  *   --color-*      → Tailwind-mapped color aliases (unchanged API)
  *
  * Color Palette:
- *   Base:   Deep Black (#0d0d10) → Graphite (#1a1a24) → Charcoal (#202030)
- *   Accent: Premium Gold (#f5c842) used ONLY for actions, highlights, metrics
- *   Status: Red (critical) · Amber (warning) · Green (success) · Cyan (info)
+ *   Dark base:   Deep Black (#0d0d10) → Graphite (#1a1a24) → Charcoal (#202030)
+ *   Light base:  Soft White (#fafaf8) → Pale Gray (#f1f1ef) → Mist (#e8e8e4)
+ *   Accent:      Premium Gold — used ONLY for actions, highlights, key metrics
+ *   Status:      Crimson (critical) · Amber (warning) · Emerald (success) · Sky (info)
+ *
+ * Typography:
+ *   Display: Playfair Display — page titles, hero metrics, executive numbers
+ *   Body:    Inter — UI, tables, body copy
+ *   Data:    JetBrains Mono — IDs, timestamps, tabular figures
  */
 
 @import "tailwindcss" source(none);
@@ -32,6 +38,11 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace;
 
   /* Semantic color mappings */
   --color-background:                var(--background);
@@ -75,7 +86,7 @@
 }
 
 /* ─────────────────────────────────────────────────
-   ROOT DESIGN TOKENS
+   ROOT DESIGN TOKENS — LIGHT MODE (default)
    Single source of truth for all colors & spacing
 ───────────────────────────────────────────────── */
 :root {
@@ -83,78 +94,79 @@
 
   /* ── Surface Layers ── */
   /* L0 - Page background */
-  --background:          oklch(0.11 0.010 265);   /* #0d0d10 deep black */
+  --background:          oklch(0.98 0.003 90);    /* #fafaf8 soft white */
   /* L1 - Cards, panels */
-  --card:                oklch(0.15 0.012 265);   /* #13131a graphite */
-  --card-foreground:     oklch(0.93 0.005 255);
+  --card:                oklch(1.00 0 0);          /* #ffffff pure white */
+  --card-foreground:     oklch(0.20 0.012 265);
   /* L2 - Elevated panels */
-  --popover:             oklch(0.17 0.013 265);
-  --popover-foreground:  oklch(0.93 0.005 255);
+  --popover:             oklch(1.00 0 0);
+  --popover-foreground:  oklch(0.20 0.012 265);
   /* L3 - Interactive surfaces */
-  --secondary:           oklch(0.20 0.014 265);   /* #1a1a24 charcoal */
-  --secondary-foreground: oklch(0.88 0.006 255);
+  --secondary:           oklch(0.95 0.004 90);     /* #f1f1ef pale gray */
+  --secondary-foreground: oklch(0.25 0.012 265);
 
   /* ── Text ── */
-  --foreground:          oklch(0.91 0.006 255);   /* Primary text */
-  --muted:               oklch(0.19 0.013 265);
-  --muted-foreground:    oklch(0.58 0.018 258);   /* Secondary/dim text */
+  --foreground:          oklch(0.18 0.012 265);    /* Primary text */
+  --muted:               oklch(0.94 0.004 90);      /* #e8e8e4 mist */
+  --muted-foreground:    oklch(0.46 0.018 258);     /* Secondary/dim text */
 
   /* ── Brand Accent: Premium Gold ── */
   /* Used ONLY for: actions, active states, key metrics, highlights */
-  --primary:             oklch(0.83 0.165 85);    /* #f5c842 gold */
-  --primary-foreground:  oklch(0.12 0.010 265);   /* Dark bg on gold */
-  --warning:             oklch(0.83 0.165 85);    /* alias */
+  --primary:             oklch(0.62 0.140 75);      /* deeper gold — holds contrast on white */
+  --primary-foreground:  oklch(0.99 0.002 90);
+  --warning:             oklch(0.62 0.140 75);      /* alias */
 
   /* ── Status Colors ── */
-  --destructive:         oklch(0.60 0.220 27);    /* #ef4444 red — critical */
-  --destructive-foreground: oklch(0.96 0.004 255);
-  --success:             oklch(0.70 0.165 152);   /* #22c55e green */
-  --info:                oklch(0.70 0.148 218);   /* #06b6d4 cyan */
-  --accent:              oklch(0.70 0.148 218);   /* cyan as accent */
-  --accent-foreground:   oklch(0.12 0.010 265);
+  --destructive:         oklch(0.54 0.220 27);      /* crimson — critical */
+  --destructive-foreground: oklch(0.99 0.002 90);
+  --success:             oklch(0.52 0.135 152);     /* emerald */
+  --info:                oklch(0.52 0.140 230);      /* sky blue — info only, never competes with gold */
+  --accent:              oklch(0.52 0.140 230);
+  --accent-foreground:   oklch(0.99 0.002 90);
 
   /* ── Borders & Inputs ── */
-  --border:              oklch(0.24 0.014 265);   /* #2a2a3d */
-  --input:               oklch(0.21 0.013 265);
-  --ring:                oklch(0.83 0.165 85);    /* Gold focus ring */
+  --border:              oklch(0.89 0.006 90);      /* #e2e2de */
+  --input:               oklch(0.93 0.005 90);
+  --ring:                oklch(0.62 0.140 75);       /* Gold focus ring */
 
   /* ── Charts ── */
-  --chart-1:             oklch(0.83 0.165 85);    /* gold */
-  --chart-2:             oklch(0.70 0.148 218);   /* cyan */
-  --chart-3:             oklch(0.60 0.220 27);    /* red */
-  --chart-4:             oklch(0.70 0.165 152);   /* green */
-  --chart-5:             oklch(0.63 0.170 305);   /* purple */
+  --chart-1:             oklch(0.62 0.140 75);       /* gold */
+  --chart-2:             oklch(0.52 0.140 230);      /* sky */
+  --chart-3:             oklch(0.54 0.220 27);       /* crimson */
+  --chart-4:             oklch(0.52 0.135 152);      /* emerald */
+  --chart-5:             oklch(0.50 0.150 305);      /* indigo-purple */
 
   /* ── Sidebar ── */
-  --sidebar:             oklch(0.13 0.011 265);   /* Slightly deeper than bg */
-  --sidebar-foreground:  oklch(0.82 0.008 255);
-  --sidebar-primary:     oklch(0.83 0.165 85);    /* gold active */
-  --sidebar-primary-foreground: oklch(0.12 0.010 265);
-  --sidebar-accent:      oklch(0.19 0.013 265);
-  --sidebar-accent-foreground: oklch(0.93 0.005 255);
-  --sidebar-border:      oklch(0.21 0.013 265);
-  --sidebar-ring:        oklch(0.83 0.165 85);
+  --sidebar:             oklch(0.97 0.004 90);       /* Slightly deeper than bg */
+  --sidebar-foreground:  oklch(0.28 0.014 265);
+  --sidebar-primary:     oklch(0.62 0.140 75);       /* gold active */
+  --sidebar-primary-foreground: oklch(0.99 0.002 90);
+  --sidebar-accent:      oklch(0.93 0.005 90);
+  --sidebar-accent-foreground: oklch(0.20 0.012 265);
+  --sidebar-border:      oklch(0.89 0.006 90);
+  --sidebar-ring:        oklch(0.62 0.140 75);
 
   /* ── SupplyMind Glow Effects ── */
-  /* Used sparingly — only on KPI cards with active status */
-  --glow-gold:     0 0 20px oklch(0.83 0.165 85 / 0.20);
-  --glow-red:      0 0 20px oklch(0.60 0.220 27 / 0.25);
-  --glow-cyan:     0 0 20px oklch(0.70 0.148 218 / 0.20);
-  --glow-green:    0 0 20px oklch(0.70 0.165 152 / 0.20);
+  /* Used sparingly — only on KPI cards with active status. Dialed back in light mode. */
+  --glow-gold:     0 0 16px oklch(0.62 0.140 75 / 0.14);
+  --glow-red:      0 0 16px oklch(0.54 0.220 27 / 0.16);
+  --glow-cyan:     0 0 16px oklch(0.52 0.140 230 / 0.14);
+  --glow-green:    0 0 16px oklch(0.52 0.135 152 / 0.14);
 
   /* ── Subtle Grid Pattern ── */
-  --grid-line:     oklch(0.24 0.014 265 / 0.5);
+  --grid-line:     oklch(0.89 0.006 90 / 0.6);
 
   /* ── Typography Scale ── */
-  /* Hero metrics:      2xl-3xl, font-mono, font-bold */
-  /* Section titles:    sm, uppercase, tracking-widest, font-semibold */
-  /* Body:              sm, font-normal */
-  /* Metadata:          xs, text-muted-foreground */
-  /* Labels:            [10px], uppercase, tracking-[0.1em] */
+  /* Hero metric:       Playfair Display, 2xl-3xl, font-bold */
+  /* Section titles:    Inter, sm, uppercase, tracking-widest, font-semibold */
+  /* Page title:        Playfair Display, xl-2xl, font-semibold */
+  /* Body:              Inter, sm, font-normal */
+  /* Metadata:          Inter, xs, text-muted-foreground */
+  /* Labels:            Inter, [10px], uppercase, tracking-[0.1em] */
+  /* Data:               JetBrains Mono — IDs, timestamps, tabular figures */
 }
 
 /* Dark mode override (when .dark class applied to html) */
-/* The root already IS dark — this maintains backward compat with shadcn */
 .dark {
   --background:    oklch(0.11 0.010 265);
   --foreground:    oklch(0.91 0.006 255);
@@ -164,6 +176,7 @@
   --popover-foreground: oklch(0.93 0.005 255);
   --primary:       oklch(0.83 0.165 85);
   --primary-foreground: oklch(0.12 0.010 265);
+  --warning:       oklch(0.83 0.165 85);
   --secondary:     oklch(0.20 0.014 265);
   --secondary-foreground: oklch(0.88 0.006 255);
   --muted:         oklch(0.19 0.013 265);
@@ -172,9 +185,16 @@
   --accent-foreground: oklch(0.12 0.010 265);
   --destructive:   oklch(0.60 0.220 27);
   --destructive-foreground: oklch(0.96 0.004 255);
+  --success:       oklch(0.70 0.165 152);
+  --info:          oklch(0.70 0.148 218);
   --border:        oklch(0.24 0.014 265);
   --input:         oklch(0.21 0.013 265);
   --ring:          oklch(0.83 0.165 85);
+  --chart-1:       oklch(0.83 0.165 85);
+  --chart-2:       oklch(0.70 0.148 218);
+  --chart-3:       oklch(0.60 0.220 27);
+  --chart-4:       oklch(0.70 0.165 152);
+  --chart-5:       oklch(0.63 0.170 305);
   --sidebar:       oklch(0.13 0.011 265);
   --sidebar-foreground: oklch(0.82 0.008 255);
   --sidebar-primary: oklch(0.83 0.165 85);
@@ -183,6 +203,11 @@
   --sidebar-accent-foreground: oklch(0.93 0.005 255);
   --sidebar-border: oklch(0.21 0.013 265);
   --sidebar-ring:  oklch(0.83 0.165 85);
+  --glow-gold:     0 0 20px oklch(0.83 0.165 85 / 0.20);
+  --glow-red:      0 0 20px oklch(0.60 0.220 27 / 0.25);
+  --glow-cyan:     0 0 20px oklch(0.70 0.148 218 / 0.20);
+  --glow-green:    0 0 20px oklch(0.70 0.165 152 / 0.20);
+  --grid-line:     oklch(0.24 0.014 265 / 0.5);
 }
 
 /* ─────────────────────────────────────────────────
@@ -214,8 +239,17 @@
     font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace;
   }
 
+  /* Display — Playfair Display for page titles & hero metrics */
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
   /* Text selection: gold highlight */
   ::selection {
+    background: oklch(0.62 0.140 75 / 0.22);
+    color: var(--foreground);
+  }
+  .dark ::selection {
     background: oklch(0.83 0.165 85 / 0.25);
     color: var(--foreground);
   }
@@ -224,10 +258,16 @@
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: oklch(0.28 0.015 265);
+    background: oklch(0.82 0.006 90);
     border-radius: 3px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.72 0.008 90);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: oklch(0.28 0.015 265);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: oklch(0.35 0.018 265);
   }
 }
@@ -256,10 +296,12 @@
   color: var(--muted-foreground);
 }
 
-/* Page title — h1 level */
+/* Page title — h1 level. Playfair Display gives executive-page weight;
+   reserved for page titles only — never tables, never dense UI. */
 .type-page-title {
-  font-size: 1.25rem;     /* 20px */
-  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;      /* 24px */
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--foreground);
 }
@@ -319,7 +361,7 @@
   cursor: pointer;
 }
 .panel-hover:hover {
-  border-color: oklch(0.83 0.165 85 / 0.40);
+  border-color: color-mix(in oklch, var(--primary) 40%, transparent);
   box-shadow: var(--glow-gold);
 }
 
@@ -369,9 +411,9 @@
 
 /* Active nav item */
 .nav-active {
-  background: oklch(0.83 0.165 85 / 0.10);
-  color: oklch(0.83 0.165 85);
-  border-color: oklch(0.83 0.165 85 / 0.25);
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--primary);
+  border-color: color-mix(in oklch, var(--primary) 25%, transparent);
 }
 
 /* Nav group label */
@@ -395,8 +437,8 @@
 }
 
 .alert-insight {
-  background: oklch(0.83 0.165 85 / 0.07);
-  border: 1px solid oklch(0.83 0.165 85 / 0.18);
+  background: color-mix(in oklch, var(--primary) 7%, transparent);
+  border: 1px solid color-mix(in oklch, var(--primary) 18%, transparent);
   border-radius: var(--radius-lg);
 }
 
@@ -432,12 +474,15 @@
   max-width: 90vw;
   background: var(--card);
   border-left: 1px solid var(--border);
-  box-shadow: -8px 0 32px oklch(0.06 0.008 265 / 0.6);
+  box-shadow: -8px 0 32px oklch(0.06 0.008 265 / 0.12);
   z-index: 50;
   transform: translateX(100%);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+}
+.dark .slide-panel {
+  box-shadow: -8px 0 32px oklch(0.06 0.008 265 / 0.6);
 }
 .slide-panel.open { transform: translateX(0); }
 

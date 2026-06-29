@@ -7,15 +7,31 @@ import { PageHeader, Kpi, SeverityBadge } from "@/components/Kpi";
 import { GraphNode, type GraphNodeData } from "@/components/ocel/GraphNode";
 import { computeCascade } from "@/lib/cascade";
 import { db, matBy } from "@/lib/mockData";
+import { useTheme } from "@/lib/theme";
 
 export const Route = createFileRoute("/app/cascade")({ component: CascadePage });
 
 const nodeTypes = { ocel: GraphNode };
 
 function CascadePage() {
+  const { theme } = useTheme();
   const [shortageId, setShortageId] = useState<string>(db.shortages[0]?.id ?? "");
   const result = useMemo(() => computeCascade(shortageId), [shortageId]);
   const criticalSet = useMemo(() => new Set(result.criticalPath.map((n) => n.id)), [result]);
+
+  // Edge/background colors resolved from CSS vars so they track the active theme
+  const edgeColors = useMemo(() => {
+    if (typeof window === "undefined") return { label: "#888", critical: "#e11", normal: "#c90", marker: "#c90", bg: "#333" };
+    const cs = getComputedStyle(document.documentElement);
+    const v = (name: string) => cs.getPropertyValue(name).trim();
+    return {
+      label: v("--muted-foreground"),
+      critical: v("--destructive"),
+      normal: `color-mix(in oklch, ${v("--primary")} 45%, transparent)`,
+      marker: `color-mix(in oklch, ${v("--primary")} 65%, transparent)`,
+      bg: `color-mix(in oklch, ${v("--border")} 70%, transparent)`,
+    };
+  }, [theme]);
 
   const { rfNodes, rfEdges } = useMemo(() => {
     const rfNodes: Node<GraphNodeData>[] = [];
@@ -35,13 +51,13 @@ function CascadePage() {
     const allowed = new Set(rfNodes.map((n) => n.id));
     const rfEdges: Edge[] = result.edges.filter((e) => allowed.has(e.source) && allowed.has(e.target)).map((e) => ({
       id: e.id, source: e.source, target: e.target, label: e.relation,
-      labelStyle: { fontSize: 8, fill: "oklch(0.62 0.018 255)" },
-      style: { stroke: criticalSet.has(e.source) && criticalSet.has(e.target) ? "oklch(0.62 0.24 22)" : "oklch(0.82 0.16 82 / 0.4)",
+      labelStyle: { fontSize: 8, fill: edgeColors.label },
+      style: { stroke: criticalSet.has(e.source) && criticalSet.has(e.target) ? edgeColors.critical : edgeColors.normal,
                strokeWidth: criticalSet.has(e.source) && criticalSet.has(e.target) ? 2.5 : 1 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: "oklch(0.82 0.16 82 / 0.6)" },
+      markerEnd: { type: MarkerType.ArrowClosed, color: edgeColors.marker },
     }));
     return { rfNodes, rfEdges };
-  }, [result, criticalSet, shortageId]);
+  }, [result, criticalSet, shortageId, edgeColors]);
 
   return (
     <div>
@@ -74,7 +90,7 @@ function CascadePage() {
           </div>
           <ReactFlow nodes={rfNodes} edges={rfEdges} nodeTypes={nodeTypes}
             fitView minZoom={0.2} maxZoom={1.5} proOptions={{ hideAttribution: true }}>
-            <Background color="oklch(0.22 0.013 260)" gap={28} variant={BackgroundVariant.Dots} />
+            <Background color={edgeColors.bg} gap={28} variant={BackgroundVariant.Dots} />
             <Controls className="!bg-card !border-border" />
           </ReactFlow>
         </div>

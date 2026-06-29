@@ -1,11 +1,13 @@
-import { Bell, Search, Sparkles, User2 } from "lucide-react";
+import { Bell, Moon, Search, Sparkles, Sun, User2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme";
 import { useShell } from "./shell-context";
 import { BrandLogo, BrandWordmark } from "./BrandLogo";
 
 export function Header() {
   const { user, logout } = useAuth();
   const { toggleCopilot } = useShell();
+  const { theme, toggleTheme } = useTheme();
   return (
     <header className="h-14 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-30 flex items-center px-3 md:px-4 gap-3 md:gap-4 pt-[env(safe-area-inset-top)]">
       <div className="flex items-center gap-2 md:mr-4 min-w-0">
@@ -24,6 +26,17 @@ export function Header() {
         <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5">⌘K</kbd>
       </div>
       <div className="flex items-center gap-1 ml-auto">
+        <button
+          onClick={toggleTheme}
+          className="h-8 w-8 grid place-items-center rounded-md hover:bg-secondary/60"
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {theme === "dark" ? (
+            <Sun className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <Moon className="h-4 w-4 text-muted-foreground" />
+          )}
+        </button>
         <button className="h-8 w-8 grid place-items-center rounded-md hover:bg-secondary/60 relative" title="Notifications">
           <Bell className="h-4 w-4 text-muted-foreground" />
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-destructive" />
